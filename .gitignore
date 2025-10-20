@@ -1,0 +1,45 @@
+# Sistema Operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
+*.cache
+temp/
+tmp/
+
+# Backups
+*.bak
+*.backup
+*~
+
+# QGIS
+*.qgs~
+*.qgz~
+*.qgd
+
+# Git
+.git/
+
+# Archivos de prueba (opcional, descomenta si necesitas)
+# test/
+# pruebas/

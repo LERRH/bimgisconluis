@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descarga mapas distritales del Perú en alta calidad - BIM GIS con Luis">
+    <title>Mapas Distritales del Perú | BIM GIS con Luis</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f5f7fa;
+        }
+        
+        /* Header */
+        .header {
+            background: #ffffff;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .youtube-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.7rem 1.5rem;
+            background: #ff0000;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .youtube-link:hover {
+            background: #cc0000;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .tool-section {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tool-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+        
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-group select:disabled {
+            background: #f5f7fa;
+            cursor: not-allowed;
+        }
+        
+        /* Preview Section */
+        .preview-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e1e8ed;
+        }
+        
+        .preview-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .image-container {
+            background: #f5f7fa;
+            border: 2px dashed #e1e8ed;
+            border-radius: 4px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        
+        .placeholder {
+            text-align: center;
+            color: #95a5a6;
+        }
+        
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Download Button */
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover:not(:disabled) {
+            background: #2980b9;
+        }
+        
+        .download-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        /* Info Text */
+        .info-text {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        
+        .info-text p {
+            color: #34495e;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-text p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        /* Error message */
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tool-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>BIM GIS con Luis</h1>
+        <p>Mapas Distritales del Perú</p>
+        <a href="https://www.youtube.com/@gisconluis6381" target="_blank" class="youtube-link">▶ Ver Canal de YouTube</a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="tool-section">
+            <h2 class="tool-title">Descarga Mapas Distritales</h2>
+            
+            <div id="loadingMessage" class="loading">
+                Cargando datos...
+            </div>
+            
+            <div id="errorMessage" style="display: none;"></div>
+            
+            <div id="formContainer" style="display: none;">
+                <!-- Form -->
+                <div class="form-group">
+                    <label for="departamento">Departamento</label>
+                    <select id="departamento">
+                        <option value="">Seleccione un departamento</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="provincia">Provincia</label>
+                    <select id="provincia" disabled>
+                        <option value="">Primero seleccione un departamento</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="distrito">Distrito</label>
+                    <select id="distrito" disabled>
+                        <option value="">Primero seleccione una provincia</option>
+                    </select>
+                </div>
+                
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <h3 class="preview-title">Vista Previa</h3>
+                    <div class="image-container" id="imageContainer">
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🗺️</div>
+                            <p>Seleccione un distrito para ver el mapa</p>
+                        </div>
+                    </div>
+                    
+                    <button class="download-btn" id="downloadBtn" disabled>Descargar Mapa</button>
+                </div>
+                
+                <!-- Info -->
+                <div class="info-text">
+                    <p><strong>ℹ️ Información:</strong></p>
+                    <p>• Mapas en formato A4 de alta calidad</p>
+                    <p>• Incluye límites distritales oficiales</p>
+                    <p id="totalDistritos">• Cargando información...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 BIM GIS con Luis | Mapas Distritales del Perú</p>
+    </div>
+
+    <script>
+        // Variables globales
+        let distritosData = {};
+        let geoJsonData = null;
+        let currentImageUrl = '';
+
+        // Elementos del DOM
+        const loadingMessage = document.getElementById('loadingMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const formContainer = document.getElementById('formContainer');
+        const deptoSelect = document.getElementById('departamento');
+        const provSelect = document.getElementById('provincia');
+        const distSelect = document.getElementById('distrito');
+        const imageContainer = document.getElementById('imageContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const totalDistritosElement = document.getElementById('totalDistritos');
+
+        // Cargar datos al iniciar
+        async function init() {
+            try {
+                const response = await fetch('data/distritos.geojson');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo de datos');
+                }
+                
+                const data = await response.json();
+                geoJsonData = data;
+                
+                // Procesar datos
+                processGeoJsonData(data);
+                
+                // Ocultar loading y mostrar formulario
+                loadingMessage.style.display = 'none';
+                formContainer.style.display = 'block';
+                
+                // Cargar departamentos
+                loadDepartamentos();
+                
+                // Actualizar contador
+                const totalDistritos = data.features.length;
+                totalDistritosElement.textContent = `• Total: ${totalDistritos.toLocaleString()} distritos disponibles`;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadingMessage.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorMessage.className = 'error-message';
+                errorMessage.textContent = 'Error al cargar los datos. Por favor, verifica que el archivo data/distritos.geojson existe.';
+            }
+        }
+
+        // Procesar GeoJSON y crear estructura jerárquica
+        function processGeoJsonData(data) {
+            distritosData = {};
+            
+            data.features.forEach(feature => {
+                const props = feature.properties;
+                const depto = props.DEPARTAMEN;
+                const prov = props.PROVINCIA;
+                const dist = props.DISTRITO;
+                const ubigeo = props.IDDIST;
+                
+                // Crear estructura jerárquica
+                if (!distritosData[depto]) {
+                    distritosData[depto] = {};
+                }
+                
+                if (!distritosData[depto][prov]) {
+                    distritosData[depto][prov] = [];
+                }
+                
+                // Agregar distrito con su información completa
+                distritosData[depto][prov].push({
+                    nombre: dist,
+                    ubigeo: ubigeo,
+                    capital: props.CAPITAL
+                });
+            });
+            
+            // Ordenar todo alfabéticamente
+            Object.keys(distritosData).forEach(depto => {
+                Object.keys(distritosData[depto]).forEach(prov => {
+                    distritosData[depto][prov].sort((a, b) => 
+                        a.nombre.localeCompare(b.nombre)
+                    );
+                });
+            });
+        }
+
+        // Cargar departamentos
+        function loadDepartamentos() {
+            const departamentos = Object.keys(distritosData).sort();
+            
+            departamentos.forEach(depto => {
+                const option = document.createElement('option');
+                option.value = depto;
+                option.textContent = depto;
+                deptoSelect.appendChild(option);
+            });
+        }
+
+        // Event listener: Departamento
+        deptoSelect.addEventListener('change', function() {
+            const selectedDepto = this.value;
+            
+            // Reset provincia y distrito
+            provSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+            distSelect.innerHTML = '<option value="">Primero seleccione una provincia</option>';
+            distSelect.disabled = true;
+            resetPreview();
+            
+            if (selectedDepto) {
+                provSelect.disabled = false;
+                const provincias = Object.keys(distritosData[selectedDepto]).sort();
+                
+                provincias.forEach(prov => {
+                    const option = document.createElement('option');
+                    option.value = prov;
+                    option.textContent = prov;
+                    provSelect.appendChild(option);
+                });
+            } else {
+                provSelect.disabled = true;
+            }
+        });
+
+        // Event listener: Provincia
+        provSelect.addEventListener('change', function() {
+            const selectedDepto = deptoSelect.value;
+            const selectedProv = this.value;
+            
+            // Reset distrito
+            distSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+            resetPreview();
+            
+            if (selectedProv && selectedDepto) {
+                distSelect.disabled = false;
+                const distritos = distritosData[selectedDepto][selectedProv];
+                
+                distritos.forEach(dist => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(dist); // Guardamos toda la info
+                    option.textContent = dist.nombre;
+                    distSelect.appendChild(option);
+                });
+            } else {
+                distSelect.disabled = true;
+            }
+        });
+
+        // Event listener: Distrito
+        distSelect.addEventListener('change', function() {
+            const selectedDistStr = this.value;
+            const selectedProv = provSelect.value;
+            const selectedDepto = deptoSelect.value;
+            
+            if (selectedDistStr && selectedProv && selectedDepto) {
+                const distInfo = JSON.parse(selectedDistStr);
+                
+                // Construir nombre del archivo según el formato real:
+                // Mapa-Distrito-ABANCAY-Provincia-ABANCAY-Departamento-APURIMAC-Peru-030101.webp
+                const imagePath = `mapas/Mapa-Distrito-${distInfo.nombre}-Provincia-${selectedProv}-Departamento-${selectedDepto}-Peru-${distInfo.ubigeo}.webp`;
+                
+                loadImage(imagePath, distInfo.nombre, selectedProv, selectedDepto);
+            } else {
+                resetPreview();
+            }
+        });
+
+        // Cargar imagen
+        function loadImage(path, distrito, provincia, departamento) {
+            imageContainer.innerHTML = `
+                <img src="${path}" 
+                     alt="Mapa del distrito ${distrito}, ${provincia}, ${departamento}" 
+                     id="previewImage" 
+                     onload="handleImageLoad()"
+                     onerror="handleImageError()">
+            `;
+            currentImageUrl = path;
+        }
+
+        // Imagen cargada correctamente
+        window.handleImageLoad = function() {
+            downloadBtn.disabled = false;
+        };
+
+        // Error al cargar imagen
+        window.handleImageError = function() {
+            imageContainer.innerHTML = `
+                <div class="placeholder">
+                    <div class="placeholder-icon">❌</div>
+                    <p>Imagen no encontrada</p>
+                    <p style="font-size: 0.9rem; color: #95a5a6; margin-top: 0.5rem;">
+                        Verifica que el archivo existe en la carpeta mapas/
+                    </p>
+                    <p style="font-size: 0.85rem; color: #95a5a6; margin-top: 0.5rem;">
+                        Ruta esperada: ${currentImageUrl}
+                    </p>
+                </div>
+            `;
+            downloadBtn.disabled = true;
+        };
+
+        // Resetear vista previa
+        function resetPreview() {
+            imageContainer.innerHTML = `
+                <div class="placeholder">
+                    <div class="placeholder-icon">🗺️</div>
+                    <p>Seleccione un distrito para ver el mapa</p>
+                </div>
+            `;
+            downloadBtn.disabled = true;
+            currentImageUrl = '';
+        }
+
+        // Descargar imagen
+        downloadBtn.addEventListener('click', function() {
+            if (currentImageUrl) {
+                const link = document.createElement('a');
+                link.href = currentImageUrl;
+                link.download = currentImageUrl.split('/').pop();
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+
+        // Inicializar aplicación
+        init();
+    </script>
+</body>
+</html>
